@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Options</title>
+  <style>
+    :root {
+      --google-blue: #1a73e8;
+      --google-blue-hover: #1765cc;
+      --google-text-primary: #202124;
+      --google-text-secondary: #5f6368;
+      --google-border: #dadce0;
+      --google-bg: #f8f9fa;
+      --google-white: #ffffff;
+      --google-success: #188038;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --google-blue: #8ab4f8;
+        --google-blue-hover: #aecbfa;
+        --google-text-primary: #e8eaed;
+        --google-text-secondary: #9aa0a6;
+        --google-border: #3c4043;
+        --google-bg: #202124;
+        --google-white: #2d2e31;
+        --google-success: #81c995;
+      }
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: var(--google-bg);
+      color: var(--google-text-primary);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      padding-top: 48px;
+    }
+
+    .container {
+      background: var(--google-white);
+      width: 100%;
+      max-width: 600px;
+      padding: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--google-border);
+      box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--google-text-primary);
+    }
+
+    .field {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--google-text-secondary);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      box-sizing: border-box;
+      border: 1px solid var(--google-border);
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--google-text-primary);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--google-blue);
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+
+    button {
+      padding: 10px 24px;
+      background-color: var(--google-blue);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--google-blue-hover);
+      box-shadow: 0 1px 3px 1px rgba(60,64,67,0.15);
+    }
+
+    button:active {
+      filter: brightness(0.9);
+    }
+
+    #status {
+      margin-top: 20px;
+      color: var(--google-success);
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Extension Settings</h2>
+    <div class="field">
+      <label for="apiUrl">API URL (Webhook)</label>
+      <input type="text" id="apiUrl" placeholder="https://example.com/webhook/flight">
+    </div>
+    <button id="save">Save Changes</button>
+    <div id="status"></div>
+  </div>
+  <script src="../dist/options.js"></script>
+</body>
+</html>

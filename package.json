@@ -1,0 +1,25 @@
+{
+  "name": "pocket-pilots-notif-extension",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Hampter/pocket-pilots-notif-extension#readme",
+  "bugs": {
+    "url": "https://github.com/Hampter/pocket-pilots-notif-extension/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hampter/pocket-pilots-notif-extension.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.7"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "NimbleBit Flight Tracker",
+  "version": "1.0",
+  "permissions": [
+    "scripting",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "src/popup.html"
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "host_permissions": [
+    "https://pilots.nimblebit.com/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://pilots.nimblebit.com/*"
+      ],
+      "js": [
+        "dist/main-world.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://pilots.nimblebit.com/*"
+      ],
+      "js": [
+        "dist/content.js"
+      ]
+    }
+  ]
+}
