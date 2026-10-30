@@ -116,19 +116,44 @@ async function postToApi(trip: Trip, trk: Number[]) {
   };
 
   const result = await chrome.storage.sync.get({
-    apiUrl: 'http://localhost:8000/',
+    apiUrl: 'http://127.0.0.1:8000',
   });
-  const apiUrl = result.apiUrl as string;
+  const credentials = await chrome.storage.local.get(['pairCode']);
+  const pairCode =
+    typeof credentials.pairCode === 'string' ? credentials.pairCode.trim() : '';
 
-  fetch(apiUrl + '/webhook/flight', {
+  if (!pairCode) {
+    showNotification('Set your pairing code in extension settings', '#b3261e');
+    console.error('[NotifExtension] Webhook not sent: pairing code is missing');
+    return;
+  }
+
+  const apiUrl = (result.apiUrl as string)
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/webhook\/flight$/i, '');
+
+  fetch(`${apiUrl}/webhook/flight`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Pair-Code': pairCode,
+    },
     body: JSON.stringify(body),
   })
-    .then((res) => res.json())
+    .then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.detail || `Server returned HTTP ${res.status}`);
+      }
+      return data;
+    })
     .then((data) => {
       console.log('[NotifExtension] Webhook sent successfully:', data);
       showNotification('Trip posted successfully', '#28a745');
     })
-    .catch((err) => console.error('[NotifExtension] Webhook failed:', err));
+    .catch((err: Error) => {
+      console.error('[NotifExtension] Webhook failed:', err);
+      showNotification(`Trip post failed: ${err.message}`, '#b3261e');
+    });
 }
