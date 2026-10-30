@@ -18,6 +18,11 @@ interface TrackOutbox {
   end: Number;
 }
 
+interface CancelOutbox {
+  op: 'cancel';
+  id?: string;
+}
+
 interface Trip {
   reg: string;
   type: string;
@@ -100,6 +105,16 @@ window.addEventListener('message', async (event) => {
         trip = null;
         trk = null;
       }
+
+      const cancelOutbox = data.outbox?.find(
+        (outItem): outItem is CancelOutbox => outItem.op === 'cancel',
+      );
+
+      if (cancelOutbox) {
+        console.log('[NotifExtension] Cancel outbox found');
+        showNotification('Trip cancellation sent', '#b3261e');
+        postCancelToApi(cancelOutbox.id ?? data.trip?.id ?? trip?.id);
+      }
     }
   }
 });
@@ -116,7 +131,7 @@ async function postToApi(trip: Trip, trk: Number[]) {
   };
 
   const result = await chrome.storage.sync.get({
-    apiUrl: 'http://127.0.0.1:8000',
+    apiUrl: 'https://pilots-api.nullnoop.dev',
   });
   const credentials = await chrome.storage.local.get(['pairCode']);
   const pairCode =
@@ -155,5 +170,50 @@ async function postToApi(trip: Trip, trk: Number[]) {
     .catch((err: Error) => {
       console.error('[NotifExtension] Webhook failed:', err);
       showNotification(`Trip post failed: ${err.message}`, '#b3261e');
+    });
+}
+
+async function postCancelToApi(id?: string) {
+  const result = await chrome.storage.sync.get({
+    apiUrl: 'https://pilots-api.nullnoop.dev',
+  });
+  const credentials = await chrome.storage.local.get(['pairCode']);
+  const pairCode =
+    typeof credentials.pairCode === 'string' ? credentials.pairCode.trim() : '';
+
+  if (!pairCode) {
+    showNotification('Set your pairing code in extension settings', '#b3261e');
+    console.error(
+      '[NotifExtension] Cancel webhook not sent: pairing code is missing',
+    );
+    return;
+  }
+
+  const apiUrl = (result.apiUrl as string)
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/webhook\/flight$/i, '');
+
+  fetch(`${apiUrl}/webhook/flight/cancel`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Pair-Code': pairCode,
+    },
+    body: JSON.stringify(id ? { id } : {}),
+  })
+    .then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.detail || `Server returned HTTP ${res.status}`);
+      }
+      return data;
+    })
+    .then((data) => {
+      console.log('[NotifExtension] Cancel webhook sent successfully:', data);
+    })
+    .catch((err: Error) => {
+      console.error('[NotifExtension] Cancel webhook failed:', err);
+      showNotification(`Trip cancel failed: ${err.message}`, '#b3261e');
     });
 }

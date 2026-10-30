@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "NimbleBit Flight Tracker",
-  "version": "1.0",
+  "name": "Pocket Pilots Flight Notifier",
+  "version": "0.0.2",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -24,7 +24,7 @@
     "open_in_tab": true
   },
   "host_permissions": [
-    "https://pilots.nimblebit.com/*",
+    "https://pilots-beta.nimblebit.com/*",
     "http://127.0.0.1/*",
     "http://localhost/*",
     "https://*/*"
@@ -32,7 +32,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://pilots.nimblebit.com/*"
+        "https://pilots-beta.nimblebit.com/*"
       ],
       "js": [
         "dist/main-world.js"
@@ -42,7 +42,7 @@
     },
     {
       "matches": [
-        "https://pilots.nimblebit.com/*"
+        "https://pilots-beta.nimblebit.com/*"
       ],
       "js": [
         "dist/content.js"

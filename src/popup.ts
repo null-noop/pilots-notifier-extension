@@ -4,12 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveButton = document.getElementById('save') as HTMLButtonElement;
   const statusDiv = document.getElementById('status') as HTMLDivElement;
 
-  chrome.storage.sync.get({ apiUrl: 'http://127.0.0.1:8000' }, (result) => {
-    apiUrlInput.value =
-      typeof result.apiUrl === 'string'
-        ? result.apiUrl
-        : 'http://127.0.0.1:8000';
-  });
+  chrome.storage.sync.get(
+    { apiUrl: 'https://pilots-api.nullnoop.dev' },
+    (result) => {
+      apiUrlInput.value =
+        typeof result.apiUrl === 'string'
+          ? result.apiUrl
+          : 'https://pilots-api.nullnoop.dev';
+    },
+  );
   chrome.storage.local.get(['pairCode'], (result) => {
     pairCodeInput.value =
       typeof result.pairCode === 'string' ? result.pairCode : '';
