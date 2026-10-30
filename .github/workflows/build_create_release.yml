@@ -32,8 +32,7 @@ jobs:
 
       - name: Package Extension
         run: |
-          cd dist
-          zip -r ../chrome-extension.zip .
+          zip -r chrome-extension.zip manifest.json icons src/*.html dist/*.js
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
