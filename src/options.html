@@ -33,26 +33,71 @@
         }
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
       body {
         min-width: 320px;
         margin: 0;
         padding: 40px 24px;
         color: var(--text);
         background: var(--page);
-        font: 14px/1.5 Arial, sans-serif;
+        font:
+          14px/1.5 Arial,
+          sans-serif;
       }
-      main { width: min(100%, 560px); margin: 0 auto; }
-      header { margin-bottom: 24px; }
-      .product { margin: 0 0 4px; color: var(--muted); font-size: 13px; }
-      .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-      .brand img { display: block; width: 36px; height: 36px; border-radius: 8px; }
-      .brand-name { color: var(--text); font-size: 14px; font-weight: 700; }
-      h1 { margin: 0; font-size: 24px; font-weight: 500; }
-      .description { margin: 8px 0 0; color: var(--muted); }
-      form { padding: 24px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
-      .field { margin-bottom: 22px; }
-      label { display: block; margin-bottom: 7px; font-weight: 600; }
+      main {
+        width: min(100%, 560px);
+        margin: 0 auto;
+      }
+      header {
+        margin-bottom: 24px;
+      }
+      .product {
+        margin: 0 0 4px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .brand img {
+        display: block;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+      }
+      .brand-name {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+      }
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 500;
+      }
+      .description {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+      form {
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .field {
+        margin-bottom: 22px;
+      }
+      label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+      }
       input {
         width: 100%;
         min-height: 42px;
@@ -63,10 +108,22 @@
         background: var(--surface);
         font: inherit;
       }
-      input:focus { border-color: var(--accent); outline: 2px solid color-mix(in srgb, var(--accent) 25%, transparent); }
-      .input-wrap { position: relative; }
-      #pairCode { padding-right: 88px; font-family: monospace; }
-      .hint { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+      input:focus {
+        border-color: var(--accent);
+        outline: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      }
+      .input-wrap {
+        position: relative;
+      }
+      #pairCode {
+        padding-right: 88px;
+        font-family: monospace;
+      }
+      .hint {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
       .visibility-toggle {
         position: absolute;
         top: 50%;
@@ -81,9 +138,19 @@
         font-size: 12px;
         cursor: pointer;
       }
-      .visibility-toggle:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
-      .privacy-note { margin: 2px 0 20px; color: var(--muted); font-size: 12px; }
-      .actions { display: flex; align-items: center; gap: 14px; }
+      .visibility-toggle:hover {
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+      }
+      .privacy-note {
+        margin: 2px 0 20px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
       #save {
         min-height: 38px;
         padding: 0 16px;
@@ -95,16 +162,41 @@
         font-weight: 600;
         cursor: pointer;
       }
-      #save:hover { background: var(--accent-hover); }
-      #save:focus-visible, .visibility-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-      #save:disabled { opacity: .65; cursor: wait; }
-      #status { min-height: 20px; color: var(--muted); font-size: 12px; }
-      #status[data-state="success"] { color: var(--success); }
-      #status[data-state="error"] { color: var(--error); }
+      #save:hover {
+        background: var(--accent-hover);
+      }
+      #save:focus-visible,
+      .visibility-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      #save:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+      #status {
+        min-height: 20px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      #status[data-state='success'] {
+        color: var(--success);
+      }
+      #status[data-state='error'] {
+        color: var(--error);
+      }
       @media (max-width: 480px) {
-        body { padding: 24px 16px; }
-        form { padding: 18px; }
-        .actions { align-items: flex-start; flex-direction: column; gap: 8px; }
+        body {
+          padding: 24px 16px;
+        }
+        form {
+          padding: 18px;
+        }
+        .actions {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
       }
     </style>
   </head>
@@ -117,26 +209,61 @@
         </div>
         <p class="product">Flight tracker extension</p>
         <h1>Settings</h1>
-        <p class="description">Configure the notification server and pair this browser with your devices.</p>
+        <p class="description">
+          Configure the notification server and pair this browser with your
+          devices.
+        </p>
       </header>
 
       <form id="settingsForm" novalidate>
         <div class="field">
           <label for="apiUrl">Notification server URL</label>
-          <input type="url" id="apiUrl" name="apiUrl" placeholder="https://pilots-api.nullnoop.dev" autocomplete="url" spellcheck="false" required />
+          <input
+            type="url"
+            id="apiUrl"
+            name="apiUrl"
+            placeholder="https://pilots-api.nullnoop.dev"
+            autocomplete="url"
+            spellcheck="false"
+            required
+          />
           <p class="hint">Enter the server base URL, not a webhook endpoint.</p>
         </div>
 
         <div class="field">
           <label for="pairCode">Pairing code</label>
           <div class="input-wrap">
-            <input type="password" id="pairCode" name="pairCode" maxlength="19" autocomplete="off" spellcheck="false" placeholder="ABCD-EFGH-JKLM-NPQR" aria-describedby="pairCodeHint" required />
-            <button class="visibility-toggle" id="togglePairCode" type="button" aria-controls="pairCode" aria-pressed="false">Show code</button>
+            <input
+              type="password"
+              id="pairCode"
+              name="pairCode"
+              maxlength="20"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="ABCDEF-GHJKMN-PQRSTU"
+              aria-describedby="pairCodeHint"
+              required
+            />
+            <button
+              class="visibility-toggle"
+              id="togglePairCode"
+              type="button"
+              aria-controls="pairCode"
+              aria-pressed="false"
+            >
+              Show code
+            </button>
           </div>
-          <p class="hint" id="pairCodeHint">Copy the private code from the mobile app. Anyone with this code can access your flight session.</p>
+          <p class="hint" id="pairCodeHint">
+            Copy the private code from the mobile app. Anyone with this code can
+            access your flight session.
+          </p>
         </div>
 
-        <p class="privacy-note">The server URL syncs with your browser profile. The pairing code is stored locally in this browser only.</p>
+        <p class="privacy-note">
+          The server URL syncs with your browser profile. The pairing code is
+          stored locally in this browser only.
+        </p>
         <div class="actions">
           <button id="save" type="submit">Save</button>
           <div id="status" role="status" aria-live="polite"></div>

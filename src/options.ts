@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   const apiUrlInput = document.getElementById('apiUrl') as HTMLInputElement;
   const pairCodeInput = document.getElementById('pairCode') as HTMLInputElement;
-  const settingsForm = document.getElementById('settingsForm') as HTMLFormElement;
+  const settingsForm = document.getElementById(
+    'settingsForm',
+  ) as HTMLFormElement;
   const saveButton = document.getElementById('save') as HTMLButtonElement;
   const statusDiv = document.getElementById('status') as HTMLDivElement;
   const togglePairCode = document.getElementById(
@@ -15,7 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const formatPairCode = (code: string) =>
-    code.replace(/[\s-]/g, '').toUpperCase().match(/.{1,4}/g)?.join('-') ?? '';
+    code
+      .replace(/[\s-]/g, '')
+      .toUpperCase()
+      .match(/.{1,4}/g)
+      ?.join('-') ?? '';
 
   chrome.storage.sync.get({ apiUrl: defaultApiUrl }, (result) => {
     apiUrlInput.value =
@@ -23,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   chrome.storage.local.get(['pairCode'], (result) => {
     pairCodeInput.value =
-      typeof result.pairCode === 'string' ? formatPairCode(result.pairCode) : '';
+      typeof result.pairCode === 'string'
+        ? formatPairCode(result.pairCode)
+        : '';
   });
 
   togglePairCode.addEventListener('click', () => {
@@ -71,8 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
       apiUrlInput.focus();
       return;
     }
-    if (!/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{16}$/.test(pairCode)) {
-      showStatus('Enter the 16-character pairing code from the server.', 'error');
+    if (!/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{18}$/.test(pairCode)) {
+      showStatus(
+        'Enter the 18-character pairing code from the server.',
+        'error',
+      );
       pairCodeInput.focus();
       return;
     }
@@ -94,7 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         pairCodeInput.value = formatPairCode(pairCode);
-        showStatus('Settings saved. You’re ready for your next flight.', 'success');
+        showStatus(
+          'Settings saved. You’re ready for your next flight.',
+          'success',
+        );
       });
     });
   });

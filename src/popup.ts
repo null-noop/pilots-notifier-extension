@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'Use an HTTP(S) server URL without credentials or query parameters.';
       return;
     }
-    if (!/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{16}$/.test(pairCode)) {
+    if (!/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{18}$/.test(pairCode)) {
       statusDiv.textContent =
-        'Enter the 16-character pairing code from the server.';
+        'Enter the 18-character pairing code from the server.';
       return;
     }
 

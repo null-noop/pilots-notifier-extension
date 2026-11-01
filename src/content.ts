@@ -3,8 +3,28 @@ interface StorageUpdateDetail {
   value: string;
 }
 
+interface ActiveFlight {
+  id: string;
+  f: { reg: string; type: string };
+  from: Airport;
+  dest: Airport;
+  log: { t0: Number };
+  job?: { photo?: Photo | null; pay?: number };
+  plan?: {
+    dep?: { ident?: string };
+    arr?: { ident?: string };
+    cruise?: number;
+  };
+}
+
+interface Photo {
+  name: string;
+  lat: number;
+  lon: number;
+}
+
 interface SaveData {
-  trip: Trip;
+  active?: ActiveFlight | null;
   outbox: Outbox[];
 }
 
@@ -30,6 +50,11 @@ interface Trip {
   from: Airport;
   t0: Number;
   id: string;
+  photo?: Photo;
+  depRunway?: string;
+  arrRunway?: string;
+  cruiseAlt?: number;
+  pay?: number;
 }
 
 interface Airport {
@@ -44,9 +69,25 @@ interface NotifRequestBody {
   dest: string;
   planeType: string;
   trk: Number[];
+  photo?: Photo;
+  depRunway?: string;
+  arrRunway?: string;
+  cruiseAlt?: number;
+  pay?: number;
+}
+
+function ensureFont() {
+  if (document.getElementById('pocket-pilots-font')) return;
+  const link = document.createElement('link');
+  link.id = 'pocket-pilots-font';
+  link.rel = 'stylesheet';
+  link.href =
+    'https://fonts.googleapis.com/css2?family=Silkscreen&display=swap';
+  document.head.appendChild(link);
 }
 
 function showNotification(message: string, bgColor: string = '#333') {
+  ensureFont();
   let container = document.getElementById(
     'pocket-pilots-notification-container',
   ) as HTMLDivElement | null;
@@ -64,11 +105,14 @@ function showNotification(message: string, bgColor: string = '#333') {
   }
 
   const notification = document.createElement('div');
-  notification.style.backgroundColor = bgColor;
+  notification.style.backgroundColor = 'rgba(3, 8, 28, 0.85)';
+  notification.style.setProperty('backdrop-filter', 'blur(8px)');
+  notification.style.setProperty('-webkit-backdrop-filter', 'blur(8px)');
+  notification.style.border = `1px solid ${bgColor}`;
   notification.style.color = '#fff';
   notification.style.padding = '10px 20px';
-  notification.style.borderRadius = '3rem';
-  notification.style.fontFamily = 'sans-serif';
+  notification.style.borderRadius = '0';
+  notification.style.fontFamily = "'Silkscreen', monospace";
   notification.style.fontSize = '14px';
   notification.textContent = message;
   container.appendChild(notification);
@@ -87,8 +131,27 @@ window.addEventListener('message', async (event) => {
 
     if (key === 'flash.save.main') {
       const data: SaveData = JSON.parse(value).data;
-      if (data.trip) {
-        trip = data.trip;
+      if (data.active) {
+        const a = data.active;
+        trip = {
+          reg: a.f.reg,
+          type: a.f.type,
+          dest: a.dest,
+          from: a.from,
+          t0: a.log.t0,
+          id: a.id,
+          photo: a.job?.photo
+            ? {
+                name: a.job.photo.name,
+                lat: a.job.photo.lat,
+                lon: a.job.photo.lon,
+              }
+            : undefined,
+          depRunway: a.plan?.dep?.ident,
+          arrRunway: a.plan?.arr?.ident,
+          cruiseAlt: a.plan?.cruise,
+          pay: a.job?.pay,
+        };
       }
 
       const trackOutbox = data.outbox?.find(
@@ -113,7 +176,7 @@ window.addEventListener('message', async (event) => {
       if (cancelOutbox) {
         console.log('[NotifExtension] Cancel outbox found');
         showNotification('Trip cancellation sent', '#b3261e');
-        postCancelToApi(cancelOutbox.id ?? data.trip?.id ?? trip?.id);
+        postCancelToApi(cancelOutbox.id ?? data.active?.id ?? trip?.id);
       }
     }
   }
@@ -128,6 +191,11 @@ async function postToApi(trip: Trip, trk: Number[]) {
     dest: trip.dest.code,
     planeType: trip.type[0].toUpperCase() + trip.type.substring(1),
     trk,
+    photo: trip.photo,
+    depRunway: trip.depRunway,
+    arrRunway: trip.arrRunway,
+    cruiseAlt: trip.cruiseAlt,
+    pay: trip.pay,
   };
 
   const result = await chrome.storage.sync.get({
