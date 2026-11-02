@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'togglePairCode',
   ) as HTMLButtonElement;
   const defaultApiUrl = 'https://pilots-api.nullnoop.dev';
+  let currentApiUrl = defaultApiUrl;
 
   const showStatus = (message: string, state: 'success' | 'error') => {
     statusDiv.textContent = message;
@@ -24,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ?.join('-') ?? '';
 
   chrome.storage.sync.get({ apiUrl: defaultApiUrl }, (result) => {
-    apiUrlInput.value =
+    currentApiUrl =
       typeof result.apiUrl === 'string' ? result.apiUrl : defaultApiUrl;
+    apiUrlInput.value = currentApiUrl;
   });
   chrome.storage.local.get(['pairCode'], (result) => {
     pairCodeInput.value =
@@ -89,26 +91,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const normalizedUrl = apiUrl.toString().replace(/\/$/, '');
+    const requestedOrigin = `${apiUrl.protocol}//${apiUrl.hostname}/*`;
     saveButton.disabled = true;
     statusDiv.textContent = 'Saving your settings…';
     delete statusDiv.dataset.state;
-    chrome.storage.sync.set({ apiUrl: normalizedUrl }, () => {
-      if (chrome.runtime.lastError) {
+    chrome.permissions.request({ origins: [requestedOrigin] }, (granted) => {
+      if (!granted) {
         saveButton.disabled = false;
-        showStatus('Could not save the server URL. Try again.', 'error');
+        showStatus('Permission for the notification server was not granted.', 'error');
         return;
       }
-      chrome.storage.local.set({ pairCode }, () => {
-        saveButton.disabled = false;
+      chrome.storage.sync.set({ apiUrl: normalizedUrl }, () => {
         if (chrome.runtime.lastError) {
-          showStatus('Could not save the pairing code. Try again.', 'error');
+          saveButton.disabled = false;
+          showStatus('Could not save the server URL. Try again.', 'error');
           return;
         }
-        pairCodeInput.value = formatPairCode(pairCode);
-        showStatus(
-          'Settings saved. You’re ready for your next flight.',
-          'success',
-        );
+        chrome.storage.local.set({ pairCode }, () => {
+          saveButton.disabled = false;
+          if (chrome.runtime.lastError) {
+            showStatus('Could not save the pairing code. Try again.', 'error');
+            return;
+          }
+          const previousUrl = new URL(currentApiUrl);
+          const previousOrigin = `${previousUrl.protocol}//${previousUrl.hostname}/*`;
+          if (previousOrigin !== requestedOrigin) {
+            chrome.permissions.remove({ origins: [previousOrigin] });
+          }
+          currentApiUrl = normalizedUrl;
+          pairCodeInput.value = formatPairCode(pairCode);
+          showStatus(
+            'Settings saved. You’re ready for your next flight.',
+            'success',
+          );
+        });
       });
     });
   });

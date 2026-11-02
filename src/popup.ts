@@ -3,16 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const pairCodeInput = document.getElementById('pairCode') as HTMLInputElement;
   const saveButton = document.getElementById('save') as HTMLButtonElement;
   const statusDiv = document.getElementById('status') as HTMLDivElement;
+  const defaultApiUrl = 'https://pilots-api.nullnoop.dev';
+  let currentApiUrl = defaultApiUrl;
 
-  chrome.storage.sync.get(
-    { apiUrl: 'https://pilots-api.nullnoop.dev' },
-    (result) => {
-      apiUrlInput.value =
-        typeof result.apiUrl === 'string'
-          ? result.apiUrl
-          : 'https://pilots-api.nullnoop.dev';
-    },
-  );
+  chrome.storage.sync.get({ apiUrl: defaultApiUrl }, (result) => {
+    currentApiUrl =
+      typeof result.apiUrl === 'string' ? result.apiUrl : defaultApiUrl;
+    apiUrlInput.value = currentApiUrl;
+  });
   chrome.storage.local.get(['pairCode'], (result) => {
     pairCodeInput.value =
       typeof result.pairCode === 'string' ? result.pairCode : '';
@@ -54,12 +52,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const normalizedUrl = apiUrl.toString().replace(/\/$/, '');
-    chrome.storage.sync.set({ apiUrl: normalizedUrl }, () => {
-      chrome.storage.local.set({ pairCode }, () => {
-        statusDiv.textContent = 'Settings saved.';
-        setTimeout(() => {
-          statusDiv.textContent = '';
-        }, 2500);
+    const requestedOrigin = `${apiUrl.protocol}//${apiUrl.hostname}/*`;
+    saveButton.disabled = true;
+    chrome.permissions.request({ origins: [requestedOrigin] }, (granted) => {
+      if (!granted) {
+        saveButton.disabled = false;
+        statusDiv.textContent = 'Permission for the notification server was not granted.';
+        return;
+      }
+      chrome.storage.sync.set({ apiUrl: normalizedUrl }, () => {
+        if (chrome.runtime.lastError) {
+          saveButton.disabled = false;
+          statusDiv.textContent = 'Could not save the server URL.';
+          return;
+        }
+        chrome.storage.local.set({ pairCode }, () => {
+          saveButton.disabled = false;
+          if (chrome.runtime.lastError) {
+            statusDiv.textContent = 'Could not save the pairing code.';
+            return;
+          }
+          const previousUrl = new URL(currentApiUrl);
+          const previousOrigin = `${previousUrl.protocol}//${previousUrl.hostname}/*`;
+          if (previousOrigin !== requestedOrigin) {
+            chrome.permissions.remove({ origins: [previousOrigin] });
+          }
+          currentApiUrl = normalizedUrl;
+          statusDiv.textContent = 'Settings saved.';
+          setTimeout(() => {
+            statusDiv.textContent = '';
+          }, 2500);
+        });
       });
     });
   });

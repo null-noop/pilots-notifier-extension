@@ -7,6 +7,10 @@ Chrome Manifest V3 extension that reads flight updates from Pocket Pilots and se
 - [Notification API](https://github.com/null-noop/pilots-notifier-server)
 - [Android app](https://github.com/null-noop/pilots-notifier-android)
 
+## Compatibility
+
+Release versions in the `vX.X.0` format are compatible when the API, extension, and Android app share the same version.
+
 ## Build
 
 Requires Node.js and npm.
